@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        /*調整大小*/
+        
+        #map {
+            width: 600px;
+            height: 450px;
+            /*height: 100%;*/
+        }
+        /* Optional: Makes the sample page fill the window. */
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="move();">Move</button>
+    <div id="map"></div>
+    <script>
+        // var lib={};
+        // lib.Point=function(x,y){
+        //     this.x=x;
+        //     this.y=y;
+        // };
+        // var point=new lib.Point(3,4);
+
+
+
+        var map;
+        function move() {
+            map.setCenter({ lat: 23, lng: 120 });//Methods setCenter(latlng:LatLng|LatLngLiteral)
+            //map.panTo({ lat: 23, lng: 120 });
+
+        }
+
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {//建立一個地圖物件，並把地圖畫在<div id="map"></div>
+                center: { lat: -34.397, lng: 150.644 }, //center是地圖的中心點。center與zoom是參數
+                zoom: 8, //調整地圖縮放
+                draggable: false,//不可拖曳
+                mapTypeId: google.maps.MapTypeId.SATELLITE//衛星地圖
+            });
+            // console.log(google.maps.MapTypeId.SATELLITE);
+            var marker = new google.maps.Marker({//標記
+                position: { lat: 23, lng: 120 },
+                map: map
+            });
+            var win = new google.maps.InfoWindow({
+                position: { lat: 23, lng: 120 },
+                content: "Hello World",
+
+
+            });
+            win.open(map, marker);//marker是InfoWindow在marker的上面，不會遮住marker
+        }
+    </script>
+    <!--載入 Google Map套件，載入完成後，呼叫callback參數指定的函式(function initMap) -->
+    <script src="https://maps.googleapis.com/maps/api/js?&callback=initMap" async defer></script>
+</body>
+
+</html>
