@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        
+        #map {
+            width: 600px;
+            height: 450px;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+    <script>
+        //data是jason的格式
+        var data = [
+            { "lat": 25.014962, "lng": 121.532743, "name": "高進發彩券行", "addr": "台北市中正區羅斯福路四段24巷14之1號" },
+            { "lat": 25.028267, "lng": 121.50585, "name": "金超群彩券行", "addr": "台北市中正區中華路二段311巷2號" },
+            { "lat": 25.044425, "lng": 121.524064, "name": "全聯運彩商行", "addr": "台北市中正區忠孝東路一段80號1樓" },
+            { "lat": 25.0252749, "lng": 121.500631, "name": "懋昇商行", "addr": "台北市萬華區萬大路281號" },
+            { "lat": 25.0301989, "lng": 121.492722, "name": "智傑彩券行", "addr": "台北市萬華區長順街1號" },
+            { "lat": 25.029194, "lng": 121.504652, "name": "金財運動彩券行", "addr": "台北市萬華區中華路2段362號1樓" }
+        ];
+        var coder;
+        var map;
+
+        function initMap() {
+            coder = new google.maps.Geocoder();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 23, lng: 120 },
+                zoom: 8
+            });
+            showSites();//顯示彩券行
+        }
+        function showSites() {
+            for (var i = 0; i < data.length; i++) {
+                showSite(data[i].name, data[i].addr);//彩券行的名字與地址
+
+            }
+        }
+        function showSite(name, address) {
+            coder.geocode({ address: address }, function (results) {
+                //console.log(results);
+                var location = results[0].geometry.location;//地址轉成經緯度
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: location//把經緯度標誌出來
+                });
+                var win = new google.maps.InfoWindow({
+                    content: "<b>" + name + "</b><br/>" + address//可以用html的格式寫
+                });
+                marker.addListener("click", function () {
+                    win.open(map, marker);
+                });
+                map.setCenter(location);
+                //console.log(location);
+            });
+
+
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+</body>
+
+</html>

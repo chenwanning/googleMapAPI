@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="startRoute();">Click</button>
+    <div id="map"></div>
+    <script>
+        var map;
+        function startRoute() {
+            var service = new google.maps.DirectionsService();
+            service.route({
+                origin: "羅斯福路四段一號",
+                destination: "新竹火車站",
+                travelMode: google.maps.TravelMode.TRANSIT
+            }, function (result, states) {
+                new google.maps.DirectionsRenderer({
+                    directions: result,
+                    map: map
+                });
+
+
+                console.log(result);
+            });
+        }
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+            map.addListener("click", function (e) {
+                console.log(e.latLng);
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+</body>
+
+</html>
