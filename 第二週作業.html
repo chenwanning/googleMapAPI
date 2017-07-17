@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Simple Map</title>
+	<meta name="viewport" content="initial-scale=1.0">
+	<meta charset="utf-8">
+	<style>
+		/* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+		
+		#map {
+			width: 60%;
+			height: 80%;
+		}
+		/* Optional: Makes the sample page fill the window. */
+		
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		input {
+			height: 30px;
+			width: 400px;
+			font-size: 15px;
+		}
+
+	</style>
+</head>
+
+<body>
+	<div id="map"></div>
+	<form action="">
+		<input id="inputOrigin" value="" placeholder="請輸入查詢位置或規劃路線起點">
+		<input id="inputDestination" value="" placeholder="請輸入查詢終點"><br>
+		<button type="button" onclick="findPosition()">查詢位置</button>
+		<button type="button" onclick="rou()">規劃路線</button>
+	</form>
+	<script>
+		var map;
+		var site = [];
+
+		//功能一:使用者輸入地址後能查詢位置
+		function findPosition() {
+			var address = document.getElementById("inputOrigin").value;
+			var coder = new google.maps.Geocoder(); //Geocoder()是名詞，是Constructor建構子
+			coder.geocode({
+				address: address
+			}, function(results, status) {
+				var location = results[0].geometry.location;
+				var marker = new google.maps.Marker({
+					map: map,
+					position: location
+				});
+				//顯示地址的資訊窗
+				var win = new google.maps.InfoWindow({
+					content: address
+				});
+				win.open(map, marker);
+			})
+		}
+
+		//功能二:使用者輸入兩個地址後能規劃路線
+		function rou() {
+			var service = new google.maps.DirectionsService();
+			service.route({
+				origin: document.getElementById("inputOrigin").value,
+				destination: document.getElementById("inputDestination").value,
+				travelMode: google.maps.TravelMode.TRANSIT
+			}, function(result, states) {
+				new google.maps.DirectionsRenderer({
+					directions: result,
+					map: map
+				});
+				win.open(map, marker);
+			})
+		}
+
+
+		//規劃路線並顯示
+		function startRoute() {
+			var service = new google.maps.DirectionsService();
+			service.route({
+				origin: site[site.length - 2], //起點
+				destination: site[site.length - 1], //終點
+				travelMode: google.maps.TravelMode.DRIVING //開車
+			}, function(result, states) {
+				new google.maps.DirectionsRenderer({ //顯示路線
+					directions: result,
+					map: map,
+
+				});
+
+				//console.log(result);
+			});
+		}
+
+
+
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {
+					lat: 24,
+					lng: 121
+				},
+				zoom: 8
+			});
+
+			//功能三:點擊地圖後可以規畫路線
+			map.addListener("click", function(e) {
+				//e.latLng是使用者在地圖上點擊的經緯度，把每次使用者點擊得到的經緯度存在陣列site中
+				site.push(e.latLng);
+				//console.log(site);
+				//使用者在地圖上點擊後，在地圖上標記
+				var marker = new google.maps.Marker({ //標記
+					position: e.latLng,
+					map: map,
+				});
+
+				//在資訊窗顯示使用者點擊的地址
+				var coder = new google.maps.Geocoder();
+				//經緯度轉換成地址
+				coder.geocode({
+					location: e.latLng
+				}, function(results, status) {
+					var name = results[0].formatted_address; //name是地址
+					//顯示地址的資訊窗
+					var win = new google.maps.InfoWindow({
+						content: name
+					});
+					win.open(map, marker);
+				});
+				//若陣列site中有兩個位址的經緯度，就呼叫規劃路線的函式
+				if (site.length >= 2) {
+					console.log(site);
+					startRoute();
+				}
+
+			});
+
+		}
+
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+</body>
+
+</html>
