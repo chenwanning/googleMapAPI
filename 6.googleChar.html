@@ -1,0 +1,87 @@
+<html>
+
+<head>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--圖表套件載入器，上面那一行-->
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart', 'geochart'] });//load套件,current是抓最新的版本號,{ 'packages': ['corechart'] }這物件是設定一些其他選項，piechart與linechart都在['corechart']核心圖表群裡面，map在['geochart']裡
+        google.charts.setOnLoadCallback(drawChart);//靜態網頁載入完成，呼叫drawChart，程式進入點
+
+        //1.畫圓餅圖
+        function drawChart() {
+            //準備圖表資料
+            //不同的圖表有不同的資料格式，看官網的範例或文件
+            var data = google.visualization.arrayToDataTable([//JSON表示法，這是二維陣列
+                ['Search Engine', 'Share'],
+                ['Google', 70],
+                ['yahoo', 15],
+                ['Bing', 15],
+
+            ]);
+            //準備圖表的設定
+            var options = {
+                title: 'Search Engine Market Share',
+                // is3D: true,
+                pieHole: 0.4,
+                colors: ['red', '#004411', "yellow"],
+            };
+            //建立圖表物件
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            //繪製
+            chart.draw(data, options);
+            //繼續把折線圖畫出來
+            drawLineChart();
+            //繼續把世界地圖畫出來
+            drawRegionsMap();
+        }
+        //2.畫折線圖
+        function drawLineChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Year', 'Sales', 'Expenses'],
+                ['2004', 1000, 400],
+                ['2005', 1170, 460],
+                ['2006', 660, 1120],
+                ['2007', 1030, 540]
+            ]);
+
+            var options = {
+                title: 'Company Performance',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('lineChart'));
+            chart.draw(data, options);
+
+
+        }
+        //3.畫地圖
+        function drawRegionsMap() {
+            var data = google.visualization.arrayToDataTable([
+                ['Country', 'Popularity'],
+                ['Germany', 200],
+                ['United States', 300],
+                ['Brazil', 400],
+                ['Canada', 500],
+                ['France', 600],
+                ['RU', 700]
+            ]);
+
+            var options = {};
+
+            var chart = new google.visualization.GeoChart(document.getElementById('world'));
+
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="piechart" style="width: 500px; height: 400px;"></div>
+    <div id="lineChart" style="width: 500px; height: 400px;"></div>
+    <div id="world" style="width: 800px; height: 500px;"></div>
+</body>
+
+</html>
